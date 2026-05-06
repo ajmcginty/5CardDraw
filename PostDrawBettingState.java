@@ -1,6 +1,6 @@
 import java.util.List;
 
-public class PreDrawBettingState implements HandState{
+public class PostDrawBettingState implements HandState{
     public void execute(PokerGame game) {
         for (Player player : game.getPlayers()) {
             if (player.isFolded()) continue;
@@ -47,6 +47,7 @@ public class PreDrawBettingState implements HandState{
     }
     
     public HandState nextState() {
-        return new DrawState();
+        return new ShowdownState();
     }
 }
+

@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Scanner;
 
 public class PokerGame {
     private List<Player> players;
@@ -7,6 +8,12 @@ public class PokerGame {
     private int currentBet;
     private HandState currentState;
 
+    private Scanner scanner = new Scanner(System.in);
+    public Scanner getScanner() {
+        return scanner;
+    }
+
+    // Getters
     public List<Player> getPlayers() {
         return players;
     }
@@ -16,8 +23,11 @@ public class PokerGame {
     public int getCurrentBet() {
         return getCurrentBet();
     }
+    public Deck getDeck() {
+        return deck;
+    }
 
-
+    // Setters
     public void setPot(int p) {
         pot = p;
     }
@@ -28,6 +38,6 @@ public class PokerGame {
     public static void main(String[] args) {
         Deck deck = Deck.makeDeck();
         deck.shuffle();
-        
+
     }
 }
