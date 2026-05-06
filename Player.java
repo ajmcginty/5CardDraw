@@ -46,4 +46,8 @@ public class Player {
     public void deductChips(int amount) {
         chipCount -= amount;
     }
+    public void resetForNewHand() {
+        isFolded = false;
+        currentHand = null;
+    }
 }
