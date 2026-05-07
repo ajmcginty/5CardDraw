@@ -12,6 +12,7 @@ public class RaiseCommand implements PokerCommand {
         player.deductChips(amount);
         game.setPot(game.getPot() + amount);
         game.setCurrentBet(amount);
+        game.incrementRaises();
     }
     public String getDescription() {
         return player.getName() + " raised to " + amount + ".";

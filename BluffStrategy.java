@@ -6,11 +6,11 @@ public class BluffStrategy implements PlayerStrategy {
         if (Math.random() < 0.1) {
             return new FoldCommand(player, game);
         }
-        else if (Math.random() < 0.2) {
-            return new CallCommand(player, callAmount, game);
+        else if (Math.random() > 0.3 && game.getRaisesThisRound() < 3 && player.getChipCount() >= callAmount * 3) {
+            return new RaiseCommand(player, callAmount * 3, game);
         }
         else {
-            return new RaiseCommand(player, callAmount * 3, game);
+            return new CallCommand(player, callAmount, game);
         }
     }
     public List<Card> decideDiscards(Hand hand, int handStrength){

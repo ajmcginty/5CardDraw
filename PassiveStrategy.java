@@ -6,11 +6,11 @@ public class PassiveStrategy implements PlayerStrategy {
         if (handStrength < 3 || callAmount > potSize / 2) {
             return new FoldCommand(player, game);
         }
-        else if (Math.random() > 0.2) {
-            return new CallCommand(player, callAmount, game);
+        else if (Math.random() < 0.2 && game.getRaisesThisRound() < 3 && player.getChipCount() >= callAmount * 2) {
+            return new RaiseCommand(player, callAmount * 2, game);
         }
         else {
-            return new RaiseCommand(player, callAmount * 2, game);
+            return new CallCommand(player, callAmount, game);
         }
     }
     public List<Card> decideDiscards(Hand hand, int handStrength){

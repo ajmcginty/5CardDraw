@@ -13,6 +13,7 @@ public class PokerGame {
     public Scanner getScanner() {
         return scanner;
     }
+    private int raisesThisRound = 0;
 
     public PokerGame() {
         pot = 0;
@@ -45,6 +46,16 @@ public class PokerGame {
     }
 
     // Other methods
+    public int getRaisesThisRound() {
+    return raisesThisRound;
+    }
+    public void incrementRaises() {
+        raisesThisRound++;
+    }
+    public void resetRaises() {
+        raisesThisRound = 0;
+    }
+    
     public void playHand() {
         deck.reset();
         for (Player player : players) {
@@ -64,7 +75,6 @@ public class PokerGame {
         currentState = currentState.nextState();
         currentState.execute(this);
     }
-
     public void play() {
         System.out.println("Welcome to Five Card Draw Poker!");
         System.out.println("Enter your name: ");
@@ -75,7 +85,6 @@ public class PokerGame {
         strategies.add(new PassiveStrategy());
         strategies.add(new BluffStrategy());
         Collections.shuffle(strategies);
-        
         
         List<String> faculty = new ArrayList<>(List.of(
             "Prof. Alvarez",
