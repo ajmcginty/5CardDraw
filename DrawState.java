@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class DrawState implements HandState{
@@ -14,16 +15,20 @@ public class DrawState implements HandState{
                 }
                 System.out.println("Select cards to replace from your hand. If none, press 0");
                 System.out.println("(Separate your input with spaces");
+
                 game.getScanner().nextLine(); // clear buffer
                 String input = game.getScanner().nextLine();
                 String[] parts = input.split(" ");
                 if (parts[0].equals("0")) {
                     continue;
                 }
+                List<Card> toDiscard = new ArrayList<>();
                 for (String part : parts) {
                     int index = Integer.parseInt(part) - 1; // convert to 0 index
-                    Card toDiscard = cards.get(index);
-                    player.getCurrentHand().removeCard(toDiscard);
+                    toDiscard.add(cards.get(index));
+                }
+                for (Card card : toDiscard) {
+                    player.getCurrentHand().removeCard(card);
                     player.getCurrentHand().addCard(game.getDeck().deal());
                 }
             } else {
