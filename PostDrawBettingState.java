@@ -5,6 +5,11 @@ public class PostDrawBettingState implements HandState {
         for (Player player : game.getPlayers()) {
             if (player.isFolded()) continue;
             if (player.isHuman()) {
+                if (player.getChipCount() < game.getCurrentBet()) {
+                    System.out.println("You can't afford to call. You have been folded.");
+                    new FoldCommand(player, game).execute();
+                    continue;
+                }
                 // print choices and get input here
                 System.out.println("Its your turn to bet.");
                 System.out.println("Your hand:");
@@ -12,10 +17,13 @@ public class PostDrawBettingState implements HandState {
                 for (int i = 0; i < cards.size(); i++) {
                     System.out.print(cards.get(i) + " ");
                 }
-                System.out.println("Bet to call: " + game.getCurrentBet() + ".");
+                System.out.println("\nBet to call: " + game.getCurrentBet() + ".");
                 System.out.println("Current pot: " + game.getPot() + ".");
+                System.out.println("Your chips: " + player.getChipCount());
                 System.out.println("1. Call (" + game.getCurrentBet() + " chips)");
-                System.out.println("2. Raise (" + game.getCurrentBet() * 2 + " chips)");
+                if (player.getChipCount() >= game.getCurrentBet() * 2) {
+                    System.out.println("2. Raise (" + game.getCurrentBet() * 2 + " chips)");
+                }
                 System.out.println("3. Fold");
                 System.out.println("What do you want to do?");
 
@@ -33,6 +41,11 @@ public class PostDrawBettingState implements HandState {
 
                 
             } else {
+                if (player.getChipCount() < game.getCurrentBet()) {
+                    new FoldCommand(player, game).execute();
+                    System.out.println(player.getName() + " folded.");
+                    continue;
+                }
                 PokerCommand command = player.getPlayerStrategy().decideAction(
                     player, 
                     player.getCurrentHand().evaluateStrength(), 
