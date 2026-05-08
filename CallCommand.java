@@ -9,6 +9,9 @@ public class CallCommand implements PokerCommand {
         amount = a;
         game = g;
     }
+    public boolean isRaise() {
+        return false;
+    }
     public void execute() {
         player.deductChips(amount);
         game.setPot(game.getPot() + amount);

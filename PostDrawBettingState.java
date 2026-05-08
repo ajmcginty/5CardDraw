@@ -1,9 +1,21 @@
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class PostDrawBettingState implements HandState {
+public class PostDrawBettingState implements HandState{
     public void execute(PokerGame game) {
-        for (Player player : game.getPlayers()) {
-            if (player.isFolded()) continue;
+        boolean raiseOccurred = true;
+        HashMap<Player, Integer> contributed = new HashMap<>(Map.of(
+            game.getPlayers().get(0), 0, 
+            game.getPlayers().get(1), 0,
+            game.getPlayers().get(2), 0,
+            game.getPlayers().get(3), 0
+        ));
+
+        while (raiseOccurred) {
+            raiseOccurred = false;
+            for (Player player : game.getPlayers()) {
+            if (player.isFolded() || contributed.get(player).equals(game.getCurrentBet())) continue;
             if (player.isHuman()) {
                 if (player.getChipCount() < game.getCurrentBet()) {
                     System.out.println("You can't afford to call. You have been folded.");
@@ -30,37 +42,47 @@ public class PostDrawBettingState implements HandState {
                 int choice = game.getScanner().nextInt();
 
                 if (choice == 1) {
-                    new CallCommand(player, game.getCurrentBet(), game).execute();
+                    int toCall = game.getCurrentBet() - contributed.get(player);
+                    new CallCommand(player, toCall, game).execute();
+                    contributed.put(player, game.getCurrentBet());
                 }
                 else if (choice ==2) {
-                    new RaiseCommand(player, game.getCurrentBet() * 2, game).execute();
+                    int newBet = game.getCurrentBet() * 2;
+                    int toPay = newBet - contributed.get(player);
+                    new RaiseCommand(player, toPay, game).execute();
+                    contributed.put(player, newBet);
+                    game.setCurrentBet(newBet);
+                    raiseOccurred = true;
                 }
                 else {
                     new FoldCommand(player, game).execute();
                 }
-
-                
             } else {
                 if (player.getChipCount() < game.getCurrentBet()) {
                     new FoldCommand(player, game).execute();
                     System.out.println(player.getName() + " folded.");
                     continue;
                 }
+                int toCall = game.getCurrentBet() - contributed.get(player);
                 PokerCommand command = player.getPlayerStrategy().decideAction(
                     player, 
                     player.getCurrentHand().evaluateStrength(), 
                     game.getPot(), 
-                    game.getCurrentBet(), 
+                    toCall, 
                     game
                 );
                 command.execute();
+                contributed.put(player, game.getCurrentBet());
+                if (command.isRaise()) {
+                    raiseOccurred = true;
+                }
                 System.out.println(command.getDescription());
+                }
             }
         }
     }
-    
+
     public HandState nextState() {
         return new ShowdownState();
     }
 }
-

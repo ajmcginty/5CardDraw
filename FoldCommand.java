@@ -5,6 +5,9 @@ public class FoldCommand implements PokerCommand {
     public FoldCommand(Player p, PokerGame g) {
         player = p;
     }
+    public boolean isRaise() {
+        return false;
+    }
 
     public void execute() {
         player.fold();

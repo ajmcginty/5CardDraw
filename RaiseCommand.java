@@ -8,6 +8,9 @@ public class RaiseCommand implements PokerCommand {
         amount = a;
         game = g;
     }
+    public boolean isRaise() {
+        return true;
+    }
     public void execute() {
         player.deductChips(amount);
         game.setPot(game.getPot() + amount);
