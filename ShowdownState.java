@@ -8,12 +8,14 @@ public class ShowdownState implements HandState {
             if (player.isFolded()) continue;
             int strength = player.getCurrentHand().evaluateStrength();
             if (strength > highestStrength) highestStrength = strength;
+            
             StringBuilder reveal = new StringBuilder();
             String displayName = player.isHuman() ? "You" : player.getName();
             reveal.append(displayName).append(" shows: ");
             for (Card card : player.getCurrentHand().getCards()) {
                 reveal.append(card).append("  ");
             }
+            
             reveal.append("— ").append(handName(strength));
             System.out.println(reveal);
             try { Thread.sleep(700); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
@@ -55,7 +57,11 @@ public class ShowdownState implements HandState {
         return new PreDrawBettingState();
     }
     private String handName(int strength) {
-        if (strength == 5) return "four of a kind";
+        if (strength == 9) return "straight flush";
+        else if (strength == 8) return "four of a kind";
+        else if (strength == 7) return "full house";
+        else if (strength == 6) return "flush";
+        else if (strength == 5) return "straight";
         else if (strength == 4) return "three of a kind";
         else if (strength == 3) return "two pair";
         else if (strength == 2) return "one pair";

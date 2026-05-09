@@ -25,8 +25,8 @@ public class PassiveStrategy implements PlayerStrategy {
             }
         }
         
-        if (handStrength == 5) {
-            // Four of a kind, keep all cards
+        if (handStrength >= 5) {
+            // straight or better, keep all cards
         }
         else if (handStrength == 4) {
             // Three of a kind, get rid of other two

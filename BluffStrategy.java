@@ -6,8 +6,8 @@ public class BluffStrategy implements PlayerStrategy {
         if (Math.random() < 0.1) {
             return new FoldCommand(player, game);
         }
-        else if (Math.random() > 0.3 && game.getRaisesThisRound() < 3 && player.getChipCount() >= callAmount * 3) {
-            return new RaiseCommand(player, callAmount * 3, game);
+        else if (Math.random() > 0.3 && game.getRaisesThisRound() < 3 && player.getChipCount() >= callAmount * 2) {
+            return new RaiseCommand(player, callAmount * 2, game);
         }
         else {
             return new CallCommand(player, callAmount, game);
@@ -17,8 +17,8 @@ public class BluffStrategy implements PlayerStrategy {
         
         List<Card> discards = new ArrayList<>();
         
-        if (handStrength == 5 || handStrength == 4 || handStrength == 3) {
-            // Four of a kind, three of a kind, or two pair, keep all cards
+        if (handStrength >= 3) {
+            // Two pair or better, keep all cards to make players believe you have better hand
         }
         else if (handStrength == 2) {
             // One pair, only get rid of one to bluff better hand

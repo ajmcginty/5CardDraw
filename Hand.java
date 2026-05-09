@@ -15,6 +15,42 @@ public class Hand {
     public void addCard(Card c) {
         playerHand.add(c);
     }
+
+    private boolean isFlush() {
+        Suit handSuit = playerHand.get(0).getSuit();
+        for (Card card : playerHand) {
+            if (card.getSuit() != handSuit) {
+                return false;
+            }
+        }
+        return true;
+    }
+    private boolean isStraight() {
+        // Sort hand
+        List<Integer> ordinals = new ArrayList<>();
+        for (Card card : playerHand) {
+            ordinals.add(card.getRank().ordinal());
+        }
+        Collections.sort(ordinals);
+
+        // check if cards increment by one
+        boolean straight = true;
+        for (int i = 0; i < 4; i++) {
+            if (ordinals.get(i + 1) != ordinals.get(i) + 1) {
+                straight = false;
+                break;
+            }
+        }
+        if (straight) {
+            return true;
+        }
+        // Special case where ace can be a 1 
+        if (ordinals.equals(List.of(0, 1, 2, 3, 12))) {
+            return true;
+        }
+        return false;
+    }
+
     public int evaluateStrength() {
         HashMap<Rank, Integer> freqMap = new HashMap<>();
         for (Card card : playerHand) {
@@ -32,11 +68,29 @@ public class Hand {
                     pairs++;
                 }
             }
+
+        if (isFlush() && isStraight()) {
+            // Straight Flush
+            return 9;
+        }
         
-        if ((freqMap.containsValue(4))) {
+        else if ((freqMap.containsValue(4))) {
             // 4 of a kind
+            return 8;
+        } 
+        else if (freqMap.containsValue(3) && freqMap.containsValue(2)) {
+            // Full House
+            return 7;
+        } 
+        else if (isFlush()) {
+            // Flush
+            return 6;
+        } 
+        else if (isStraight()) {
+            // Straight
             return 5;
-        } else if (freqMap.containsValue(3)) {
+        } 
+        else if (freqMap.containsValue(3)) {
             // 3 of a kind
             return 4;
         } else if (freqMap.containsValue(2)) {

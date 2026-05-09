@@ -6,7 +6,7 @@ public class AggressiveStrategy implements PlayerStrategy {
         if (handStrength < 2) {
             return new FoldCommand(player, game);
         }
-        else if (Math.random() > 0.6 && game.getRaisesThisRound() < 3 && player.getChipCount() >= callAmount * 2) {
+        else if (Math.random() > 0.5 && game.getRaisesThisRound() < 3 && player.getChipCount() >= callAmount * 2) {
             return new RaiseCommand(player, callAmount * 2, game);
         } else {
             return new CallCommand(player, callAmount, game);
@@ -24,8 +24,8 @@ public class AggressiveStrategy implements PlayerStrategy {
             }
         }
         
-        if (handStrength == 5) {
-            // Four of a kind, keep all cards
+        if (handStrength >= 5) {
+            // Straight or better, keep all cards
         }
         else if (handStrength == 4) {
             // Three of a kind, get rid of other two
