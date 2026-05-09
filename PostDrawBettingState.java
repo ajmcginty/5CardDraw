@@ -4,6 +4,7 @@ import java.util.Map;
 
 public class PostDrawBettingState implements HandState{
     public void execute(PokerGame game) {
+        System.out.println("\n=== POST-DRAW BETTING ===");
         boolean raiseOccurred = true;
         HashMap<Player, Integer> contributed = new HashMap<>(Map.of(
             game.getPlayers().get(0), 0, 
@@ -15,6 +16,7 @@ public class PostDrawBettingState implements HandState{
         while (raiseOccurred) {
             raiseOccurred = false;
             for (Player player : game.getPlayers()) {
+            if (player.getCurrentHand() == null) continue;
             if (player.isFolded() || contributed.get(player).equals(game.getCurrentBet())) continue;
             if (player.isHuman()) {
                 if (player.getChipCount() < game.getCurrentBet()) {
@@ -22,22 +24,21 @@ public class PostDrawBettingState implements HandState{
                     new FoldCommand(player, game).execute();
                     continue;
                 }
-                // print choices and get input here
-                System.out.println("Its your turn to bet.");
+                System.out.println("\nIt's your turn to bet.");
                 System.out.println("Your hand:");
                 List<Card> cards = player.getCurrentHand().getCards();
-                for (int i = 0; i < cards.size(); i++) {
-                    System.out.print(cards.get(i) + " ");
-                }
-                System.out.println("\nBet to call: " + game.getCurrentBet() + ".");
-                System.out.println("Current pot: " + game.getPot() + ".");
-                System.out.println("Your chips: " + player.getChipCount());
+                StringBuilder handDisplay = new StringBuilder(" ");
+                for (Card card : cards) handDisplay.append(card).append("  ");
+                System.out.println(handDisplay);
+                System.out.println();
+                System.out.println("Pot: " + game.getPot() + "  |  Bet to call: " + game.getCurrentBet() + "  |  Your chips: " + player.getChipCount());
+                System.out.println();
                 System.out.println("1. Call (" + game.getCurrentBet() + " chips)");
                 if (player.getChipCount() >= game.getCurrentBet() * 2) {
                     System.out.println("2. Raise (" + game.getCurrentBet() * 2 + " chips)");
                 }
                 System.out.println("3. Fold");
-                System.out.println("What do you want to do?");
+                System.out.print("> ");
 
                 int choice = game.getScanner().nextInt();
 
@@ -61,6 +62,7 @@ public class PostDrawBettingState implements HandState{
                 if (player.getChipCount() < game.getCurrentBet()) {
                     new FoldCommand(player, game).execute();
                     System.out.println(player.getName() + " folded.");
+                    try { Thread.sleep(500); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
                     continue;
                 }
                 int toCall = game.getCurrentBet() - contributed.get(player);
@@ -77,6 +79,7 @@ public class PostDrawBettingState implements HandState{
                     raiseOccurred = true;
                 }
                 System.out.println(command.getDescription());
+                try { Thread.sleep(500); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
                 }
             }
         }

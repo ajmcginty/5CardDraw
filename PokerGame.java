@@ -57,9 +57,20 @@ public class PokerGame {
     }
     
     public void playHand() {
+        System.out.println("\n=== NEW HAND ===");
+        StringBuilder chipLine = new StringBuilder("Chips  —");
+        for (Player player : players) {
+            chipLine.append("  ").append(player.isHuman() ? "You" : player.getName())
+                    .append(": ").append(player.getChipCount());
+        }
+        System.out.println(chipLine);
+        System.out.println();
+
         deck.reset();
         for (Player player : players) {
             if (player.getChipCount() < 20) continue;
+            player.deductChips(10);
+            pot += 10;
             List<Card> dealtCards = new ArrayList<>();
             for (int i = 0; i < 5; i++) {
                 dealtCards.add(deck.deal());
@@ -68,16 +79,27 @@ public class PokerGame {
         }
         currentState = new PreDrawBettingState();
         currentState.execute(this);
-        currentState = currentState.nextState();
-        currentState.execute(this);
-        currentState = currentState.nextState();
-        currentState.execute(this);
-        currentState = currentState.nextState();
+
+        int activePlayers = 0;
+        for (Player player : players) {
+            if (!player.isFolded()) activePlayers++;
+        }
+        if (activePlayers > 1) {
+            currentState = new DrawState();
+            currentState.execute(this);
+            currentState = new PostDrawBettingState();
+            currentState.execute(this);
+        }
+
+        currentState = new ShowdownState();
         currentState.execute(this);
     }
     public void play() {
-        System.out.println("Welcome to Five Card Draw Poker!");
-        System.out.println("Enter your name: ");
+        System.out.println("╔══════════════════════════════╗");
+        System.out.println("║   Five Card Draw Poker       ║");
+        System.out.println("╚══════════════════════════════╝");
+        System.out.println();
+        System.out.print("Enter your name: ");
         String humanName = scanner.nextLine();
 
         List<PlayerStrategy> strategies = new ArrayList<>();
@@ -124,12 +146,13 @@ public class PokerGame {
             playHand();
             // check if human is out
             if (players.get(0).getChipCount() < 20) {
-                System.out.println("You're out of chips. Game over!");
+                System.out.println("\n=== GAME OVER ===");
+                System.out.println("You're out of chips. Better luck next time!");
                 break;
             }
-            // check if all AI are out
             else if (players.get(1).getChipCount() < 20 && players.get(2).getChipCount() < 20 && players.get(3).getChipCount() < 20) {
-                System.out.println("You win! All opponents have been eliminated!");
+                System.out.println("\n=== YOU WIN! ===");
+                System.out.println("All opponents have been eliminated. Congratulations!");
                 break;
             }
         }
