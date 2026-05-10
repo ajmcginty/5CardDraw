@@ -20,7 +20,6 @@ public class PokerGame {
         currentBet = 20;
         deck = Deck.makeDeck();
         players = new ArrayList<>();
-        currentState = new PreDrawBettingState();
     }
 
     // Getters
@@ -77,7 +76,9 @@ public class PokerGame {
             }
             player.setHand(new Hand(dealtCards));
         }
+
         currentState = new PreDrawBettingState();
+        resetRaises();
         currentState.execute(this);
 
         int activePlayers = 0;
@@ -85,13 +86,21 @@ public class PokerGame {
             if (!player.isFolded()) activePlayers++;
         }
         if (activePlayers > 1) {
-            currentState = new DrawState();
+            //  go to draw state
+            currentState = currentState.nextState();
             currentState.execute(this);
-            currentState = new PostDrawBettingState();
+            //  go to post draw betting state
+            currentState = currentState.nextState();
+            resetRaises();
+            currentBet = 20;
             currentState.execute(this);
+        } else {
+            // one or all people folded, just cycle through draw and post draw betting states
+            currentState = currentState.nextState();
+            currentState = currentState.nextState();
         }
-
-        currentState = new ShowdownState();
+        // go to showdown state
+        currentState = currentState.nextState();
         currentState.execute(this);
     }
     public void play() {
