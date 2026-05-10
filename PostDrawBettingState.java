@@ -47,7 +47,7 @@ public class PostDrawBettingState implements HandState{
                     new CallCommand(player, toCall, game).execute();
                     contributed.put(player, game.getCurrentBet());
                 }
-                else if (choice ==2) {
+                else if (choice == 2 && player.getChipCount() >= game.getCurrentBet() * 2) {
                     int newBet = game.getCurrentBet() * 2;
                     int toPay = newBet - contributed.get(player);
                     new RaiseCommand(player, toPay, game).execute();
